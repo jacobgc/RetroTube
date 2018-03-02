@@ -1,21 +1,24 @@
 var express = require("express");
 var router = express.Router();
-const youTubeAPI = require("../classes/youtubeAPI");
 const debug = require("debug")("retrotube/routes/index.js");
+
+
+const youTubeAPI = require("../classes/youtubeAPI");
+const dataStorage = require("../classes/dataStorage");
 /* GET home page. */
-router.get("/", function(req, res) {
+router.get("/", function (req, res) {
   res.render("index", {
     title: "RetroTube -- Home"
   });
 });
 
-router.get("/search", function(req, res) {
+router.get("/search", function (req, res) {
   res.render("search", {
     title: "RetroTube -- Search"
   });
 });
 
-router.post("/search", async function(req, res) {
+router.post("/search", async function (req, res) {
   var yt = new youTubeAPI();
   debug(`Looking up username: ${req.body.searchQuery}`);
   try {
@@ -31,17 +34,24 @@ router.post("/search", async function(req, res) {
       picHigh: response.items[0].snippet.thumbnails.high.url,
       description: response.items[0].snippet.description
     };
-    debug(result);
+    debug("Rendering search page with result");
     res.render("search", {
       title: "RetroTube -- Search",
       result: result
     });
   } catch (error) {
+    debug(`❌ : ${error}`)
     res.redirect("/search"); // Blank search box showing 0 results
   }
 });
 
-router.get("/watch/*", function(req, res) {
-  // Do stuff yeah
+router.get("/watch/*", async function (req, res) {
+  const ds = new dataStorage();
+  try {
+    ds.storeYouTubeAccount();
+  } catch (error) {
+    debug(`❌:${error}`);
+    throw error
+  }
 });
 module.exports = router;
