@@ -10,7 +10,6 @@ class youtubeAPI {
    * @throws rejected if no user found
    */
   async channels(username, part) {
-    var ds = new dataStorage();
 
     const options = {
       uri: "https://www.googleapis.com/youtube/v3/channels",
@@ -27,14 +26,13 @@ class youtubeAPI {
 
     debug("Requesting data from Youtube API");
     try {
-      var response = await(request(options));
+      var response = await (request(options));
       debug("✔️ : Youtube API request successful");
       if (!response.pageInfo.totalResults < 1) {
         debug(
           `✔️ : Total Results for search: ${response.pageInfo.totalResults}`
         );
         debug(`✔️ : Channel ID: ${response.items[0].id}`);
-        ds.storeYouTubeAccount(response);
         return (response);
       } else {
         debug("❌ : No channels found");
@@ -44,6 +42,65 @@ class youtubeAPI {
       debug(`❌ : ${error}`);
       throw error;
     }
+  }
+
+  async getVideosFromChannel(ID){
+
+    var options = {
+      uri: "https://www.googleapis.com/youtube/v3/playlistItems",
+      qs: {
+        part: 'snippet', // -> uri + '?part=snippet',
+        maxResults: 50,
+        playlistId: ID, // -> uri + '&ID=UUKab3hYnOoTZZbEUQBMx-ww',
+        key: process.env.youTubeKey // -> uri + '&key=XXXXXXX',
+      },
+      headers: {
+        "User-Agent": "RetroTube-BackendRequest"
+      },
+      json: true // Automatically parses the JSON string in the response
+    };
+
+    debug("Requesting data from Youtube API");
+    try {
+      var curPage = 1;
+      var vids = []
+      var parsedVids = []
+      var response = await (request(options));
+      debug("✔️ : Youtube API request successful");
+      vids.push(response.items);
+      while(response.nextPageToken){
+        debug(`Looping to page: ${curPage++}`);
+        options = {
+          uri: "https://www.googleapis.com/youtube/v3/playlistItems",
+          qs: {
+            part: 'snippet', // -> uri + '?part=snippet',
+            maxResults: 50,
+            playlistId: ID, // -> uri + '&ID=UUKab3hYnOoTZZbEUQBMx-ww',
+            key: process.env.youTubeKey, // -> uri + '&key=XXXXXXX',
+            pageToken: response.nextPageToken
+          },
+          headers: {
+            "User-Agent": "RetroTube-BackendRequest"
+          },
+          json: true // Automatically parses the JSON string in the response
+        };
+        response = await (request(options));
+        debug("✔️ : Youtube API request successful");
+        vids.push(response.items);
+      }     
+      for (let index = 0; index < vids.length; index++) {
+        const groupOfVids = vids[index];
+        for (let index = 0; index < groupOfVids.length; index++) {
+          const vid = groupOfVids[index];
+          parsedVids.push([vid.snippet.channelId, vid.snippet.resourceId.videoId, vid.snippet.title, vid.snippet.description, vid.snippet.publishedAt, vid.snippet.thumbnails]);
+        }
+      }
+      return parsedVids
+    } catch (error) {
+      debug(`❌ : ${error}`);
+      throw error;
+    }
+
   }
 }
 

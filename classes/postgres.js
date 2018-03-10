@@ -41,23 +41,6 @@ class postgres {
 
     }
 
-    /** 
-     * @name select
-     * @description Used to select from the database
-     * @param {string} query The query to use against the database, without "SELECT"
-     * @returns {Promise}
-     * 
-     */
-    async select(query){
-        this.client.query('SELECT NOW() as now', (err, res) => {
-            if (err) {
-              console.log(err.stack)
-            } else {
-              console.log(res.rows[0])
-            }
-          })
-    }
-
 }
 
 module.exports = postgres;
