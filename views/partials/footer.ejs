@@ -3,3 +3,12 @@
 </a>
 <script defer src="https://use.fontawesome.com/releases/v5.0.0/js/all.js"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+<script>
+    console.log('Creating Socket')
+    var socket = io('//localhost:3000');
+    console.log('Socket Created');
+    socket.on('socketToMe', function (data) {
+      console.log(data);
+    });
+</script>

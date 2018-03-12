@@ -5,10 +5,9 @@ const debug = require("debug")("retrotube/routes/index.js");
 
 const youTubeAPI = require("../classes/youtubeAPI");
 var yt = new youTubeAPI();
-const dataStorage = require("../classes/dataStorage");
-var ds = new dataStorage();
 /* GET home page. */
 router.get("/", function (req, res) {
+  res.io.emit("socketToMe", "users");
   res.render("index", {
     title: "RetroTube -- Home"
   });
@@ -36,9 +35,6 @@ router.post("/search", async function (req, res) {
       picHigh: response.items[0].snippet.thumbnails.high.url,
       description: response.items[0].snippet.description
     };
-    debug("Attempting to store channel into database if it does not exist already");
-    await ds.storeYouTubeAccount(result);
-    debug("Rendering search page with result");
     res.render("search", {
       title: "RetroTube -- Search",
       result: result
@@ -54,7 +50,6 @@ router.get("/watch/*", async function (req, res) {
     var res = req.originalUrl.split('/');
     var vids = await yt.getVideosFromChannel(res[2]);
     debug(vids)
-    ds.storeYouTubeVideos(vids);
   } catch (error) {
     throw error
   }

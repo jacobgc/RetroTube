@@ -4,12 +4,16 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var debug = require('debug')('retrotube/app.js')
+var SocketDebug = require('debug')('retrotube/app.js(SOCKET)')
+
 require('dotenv').config()
 
 var index = require('./routes/index');
 
 var app = express();
-
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -21,6 +25,16 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(function(req, res, next){
+  res.io = io;
+  next();
+});
+
+
+io.on('connection', function (socket) {
+  SocketDebug(`New socket from: ${socket.handshake.address}`)
+});
 
 app.use('/', index);
 
@@ -44,4 +58,4 @@ app.use(function(err, req, res, next) {
   });
 });
 
-module.exports = app;
+module.exports = {app: app, server: server};

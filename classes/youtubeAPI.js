@@ -1,6 +1,5 @@
 const request = require("request-promise");
 const debug = require("debug")("retrotube/classes/youtubeAPI.js");
-const dataStorage = require('./dataStorage');
 class youtubeAPI {
   /**
    * @description Uses the /v3/channels API end point to search for a user using the given username.
