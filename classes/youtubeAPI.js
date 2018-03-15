@@ -43,12 +43,36 @@ class youtubeAPI {
     }
   }
 
-  async getVideosFromChannel(ID){
+  async getDurationOfVideo(VideoID){
+    var options = {
+      uri: "https://www.googleapis.com/youtube/v3/videos",
+      qs: {
+        part: 'contentDetails', // -> uri + '?part=snippet',
+        maxResults: 1,
+        id: VideoID, // -> uri + '&ID=UUKab3hYnOoTZZbEUQBMx-ww',
+        key: process.env.youTubeKey // -> uri + '&key=XXXXXXX',
+      },
+      headers: {
+        "User-Agent": "RetroTube-BackendRequest"
+      },
+      json: true // Automatically parses the JSON string in the response
+    };
 
+    try {
+      var response = await (request(options));
+      debug("✔️ : Youtube API request successful");
+      return youtubeDurationToSeconds(response.items[0].contentDetails.duration);
+      } catch (error) {
+      debug(`❌ : ${error}`);
+      throw error;
+    }
+  }
+
+  async getVideosFromChannel(ID){
     var options = {
       uri: "https://www.googleapis.com/youtube/v3/playlistItems",
       qs: {
-        part: 'snippet', // -> uri + '?part=snippet',
+        part: 'snippet, contentDetails', // -> uri + '?part=snippet',
         maxResults: 50,
         playlistId: ID, // -> uri + '&ID=UUKab3hYnOoTZZbEUQBMx-ww',
         key: process.env.youTubeKey // -> uri + '&key=XXXXXXX',
@@ -72,7 +96,7 @@ class youtubeAPI {
         options = {
           uri: "https://www.googleapis.com/youtube/v3/playlistItems",
           qs: {
-            part: 'snippet', // -> uri + '?part=snippet',
+            part: 'snippet, contentDetails', // -> uri + '?part=snippet',
             maxResults: 50,
             playlistId: ID, // -> uri + '&ID=UUKab3hYnOoTZZbEUQBMx-ww',
             key: process.env.youTubeKey, // -> uri + '&key=XXXXXXX',
@@ -101,6 +125,39 @@ class youtubeAPI {
     }
 
   }
+}
+
+
+function youtubeDurationToSeconds(duration) {
+	var hours   = 0;
+	var minutes = 0;
+	var seconds = 0;
+
+	// Remove PT from string ref: https://developers.google.com/youtube/v3/docs/videos#contentDetails.duration
+	duration = duration.replace('PT','');
+
+	// If the string contains hours parse it and remove it from our duration string
+	if (duration.indexOf('H') > -1) {
+		hours_split = duration.split('H');
+		hours       = parseInt(hours_split[0]);
+		duration    = hours_split[1];
+	}
+
+	// If the string contains minutes parse it and remove it from our duration string
+	if (duration.indexOf('M') > -1) {
+		minutes_split = duration.split('M');
+		minutes       = parseInt(minutes_split[0]);
+		duration      = minutes_split[1];
+	}
+
+	// If the string contains seconds parse it and remove it from our duration string
+	if (duration.indexOf('S') > -1) {
+		seconds_split = duration.split('S');
+		seconds       = parseInt(seconds_split[0]);
+	}
+
+	// Math the values to return seconds
+	return (hours * 60 * 60) + (minutes * 60) + seconds;
 }
 
 module.exports = youtubeAPI;

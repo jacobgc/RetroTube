@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include ./partials/head.ejs %>
+</head>
+
+<body>
+
+    <%- include ./partials/navbar.ejs %>
+
+        <section class="section">
+            <div class="container is-fluid">
+                <h1 class="title">
+                    Watching:
+                </h1>
+                <div class="columns">
+                    <div class="column is-three-quarters">
+                        <div class="videoWrapper">
+                            <div id="player"></div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        Chat Here
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <%- include ./partials/footer.ejs %>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+            <script src="/assets/js/sockets.js"></script>
+            <script  async=false defer=false src="/assets/js/youTubePlayer.js"></script>
+</body>
+
+</html>

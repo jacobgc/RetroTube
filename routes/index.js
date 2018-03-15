@@ -1,25 +1,25 @@
 var express = require("express");
 var router = express.Router();
 const debug = require("debug")("retrotube/routes/index.js");
-
-
+const playerClass = require("../classes/player");
 const youTubeAPI = require("../classes/youtubeAPI");
 var yt = new youTubeAPI();
+var player = new playerClass();
 /* GET home page. */
-router.get("/", function (req, res) {
+router.get("/", function(req, res) {
   res.io.emit("socketToMe", "users");
   res.render("index", {
     title: "RetroTube -- Home"
   });
 });
 
-router.get("/search", function (req, res) {
+router.get("/search", function(req, res) {
   res.render("search", {
     title: "RetroTube -- Search"
   });
 });
 
-router.post("/search", async function (req, res) {
+router.post("/search", async function(req, res) {
   debug(`Looking up username: ${req.body.searchQuery}`);
   try {
     var response = await yt.channels(
@@ -40,19 +40,19 @@ router.post("/search", async function (req, res) {
       result: result
     });
   } catch (error) {
-    debug(`❌ : ${error}`)
+    debug(`❌ : ${error}`);
     res.redirect("/search"); // Blank search box showing 0 results
   }
 });
 
-router.get("/watch/*", async function (req, res) {
+router.get("/watch/*", async function(req, res) {
   try {
-    var res = req.originalUrl.split('/');
-    var vids = await yt.getVideosFromChannel(res[2]);
-    debug(vids)
-  } catch (error) {
-    throw error
-  }
+    res.render("watch", {
+      title: "RetroTube -- Watching X",
+    });
 
+  } catch (error) {
+    throw error;
+  }
 });
 module.exports = router;
