@@ -75,7 +75,7 @@ class youtubeAPI {
         part: 'snippet, contentDetails', // -> uri + '?part=snippet',
         maxResults: 50,
         playlistId: ID, // -> uri + '&ID=UUKab3hYnOoTZZbEUQBMx-ww',
-        key: process.env.youTubeKey // -> uri + '&key=XXXXXXX',
+        key: process.env.YOUTUBE_KEY // -> uri + '&key=XXXXXXX',
       },
       headers: {
         "User-Agent": "RetroTube-BackendRequest"
@@ -138,21 +138,21 @@ function youtubeDurationToSeconds(duration) {
 
 	// If the string contains hours parse it and remove it from our duration string
 	if (duration.indexOf('H') > -1) {
-		hours_split = duration.split('H');
+		let hours_split = duration.split('H');
 		hours       = parseInt(hours_split[0]);
 		duration    = hours_split[1];
 	}
 
 	// If the string contains minutes parse it and remove it from our duration string
 	if (duration.indexOf('M') > -1) {
-		minutes_split = duration.split('M');
+		let minutes_split = duration.split('M');
 		minutes       = parseInt(minutes_split[0]);
 		duration      = minutes_split[1];
 	}
 
 	// If the string contains seconds parse it and remove it from our duration string
 	if (duration.indexOf('S') > -1) {
-		seconds_split = duration.split('S');
+		let seconds_split = duration.split('S');
 		seconds       = parseInt(seconds_split[0]);
 	}
 

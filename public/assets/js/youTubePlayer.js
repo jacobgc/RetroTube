@@ -30,6 +30,8 @@
         console.log(state.data);
         if(state.data === 1){
           updateVideoTime();
+        }else if(state.data === 0){
+          requestNewVideo();
         }
       }
 
