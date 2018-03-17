@@ -26,9 +26,14 @@ function updateVideoTime() {
 function requestNewVideo() {
     var YouTubeID = window.location.pathname.replace("/watch/", '');
     socket.emit("iWantAVideo", YouTubeID, async (response) => {
-        videoData = response;
-        console.log(`Got Video: ${JSON.stringify(response)}`);
-        console.log(`Telling YouTube player to play ${response.videoID}`)
-        player.loadVideoById(response.videoID, 0, "large");
+        if(response){ // response is false if no video could be loaded
+            videoData = response;
+            console.log(`Got Video: ${JSON.stringify(response)}`);
+            console.log(`Telling YouTube player to play ${response.videoID}`);
+            player.loadVideoById(response.videoID, 0, "large");
+        }else{
+            // TODO make this show the user an error
+            console.log("Err, no video found");
+        }
     });
 }

@@ -43,7 +43,7 @@ class player {
         return false;
       }
     } catch (error) {
-      debug(error)
+      throw error;
     }
   }
 
