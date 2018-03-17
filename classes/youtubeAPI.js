@@ -15,7 +15,7 @@ class youtubeAPI {
       qs: {
         part: part, // -> uri + '?part=contentDetails',
         forUsername: username, // -> uri + '&forUsername=OfficialNerdCubed',
-        key: process.env.youTubeKey // -> uri + '&key=XXXXXXX',
+        key: process.env.YOUTUBE_KEY // -> uri + '&key=XXXXXXX',
       },
       headers: {
         "User-Agent": "RetroTube-BackendRequest"
@@ -50,7 +50,7 @@ class youtubeAPI {
         part: 'contentDetails', // -> uri + '?part=snippet',
         maxResults: 1,
         id: VideoID, // -> uri + '&ID=UUKab3hYnOoTZZbEUQBMx-ww',
-        key: process.env.youTubeKey // -> uri + '&key=XXXXXXX',
+        key: process.env.YOUTUBE_KEY // -> uri + '&key=XXXXXXX',
       },
       headers: {
         "User-Agent": "RetroTube-BackendRequest"
@@ -99,7 +99,7 @@ class youtubeAPI {
             part: 'snippet, contentDetails', // -> uri + '?part=snippet',
             maxResults: 50,
             playlistId: ID, // -> uri + '&ID=UUKab3hYnOoTZZbEUQBMx-ww',
-            key: process.env.youTubeKey, // -> uri + '&key=XXXXXXX',
+            key: process.env.YOUTUBE_KEY, // -> uri + '&key=XXXXXXX',
             pageToken: response.nextPageToken
           },
           headers: {

@@ -4,7 +4,7 @@ var socket;
 async function init() {
     try {
         console.log('Creating Socket')
-        socket = await io('//localhost:3000');
+        socket = await io(location.hostname+":"+location.port);
         console.log('Socket Created');
         socket.on('youShouldGetAVideo', async function (data) {
             requestNewVideo();
