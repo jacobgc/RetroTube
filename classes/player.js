@@ -9,11 +9,10 @@ redis.getAsync = promisify(redis.get).bind(redis);
 redis.setAsync = promisify(redis.set).bind(redis);
 redis.TTLAsync = promisify(redis.ttl).bind(redis);
 
-(async function redisAuth() {
+(async function() {
   try {
     debug("Authenticating with redis");
     await redis.auth(rtg.auth.split(":")[1]);
-
     debug("Authenticated");
   } catch (error) {
     throw error;
@@ -23,7 +22,6 @@ redis.TTLAsync = promisify(redis.ttl).bind(redis);
 class player {
   async setLock(username, videoLength, videoID) {
     try {
-      await redisAuth()
       debug(`Locking ${username} for: ${videoLength} seconds`);
       await redis.setAsync(`${username}:lock`, videoID, "EX", videoLength);
       debug(`Lock set`);
@@ -35,7 +33,6 @@ class player {
 
   async checkLockStatus(username) {
     try {
-      await redisAuth()
       debug(`Checking if lock for ${username} is in redis`);
       var lockStatus = await redis.getAsync(`${username}:lock`);
       if (lockStatus) {
@@ -52,7 +49,6 @@ class player {
 
   async checkLockTTL(username) {
     try {
-      await redisAuth()
       debug(`Checking TTL for ${username} in redis`);
       var TTL = await redis.TTLAsync(`${username}:lock`);
       debug(TTL);
